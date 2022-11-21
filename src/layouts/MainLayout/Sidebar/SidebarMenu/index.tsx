@@ -1,0 +1,396 @@
+import { useRef, useState } from "react";
+
+import {
+  Tooltip,
+  Box,
+  List,
+  styled,
+  Button,
+  ListItem,
+  Divider,
+  Popover,
+  Typography,
+} from "@mui/material";
+import { NavLink as RouterLink, useNavigate } from "react-router-dom";
+
+import { ReactComponent as ProfileIcon } from "~/assets/icons/profile.svg";
+import { ReactComponent as ReportsIcon } from "~/assets/icons/reports.svg";
+import { ReactComponent as BillingIcon } from "~/assets/icons/billing.svg";
+import { ReactComponent as EyeIcon } from "~/assets/icons/eye.svg";
+import { ReactComponent as UmbrellaIcon } from "~/assets/icons/umbrella.svg";
+import SettingsIcon from "@mui/icons-material/Settings";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import { version } from "~/components/Login/LoginForm";
+
+const MenuWrapper = styled(Box)(
+  ({ theme }) => `
+  height: 80%;
+  .MuiList-root {
+    padding: ${theme.spacing(0)};
+
+    & > .MuiList-root {
+      padding: 0 ${theme.spacing(0)} ${theme.spacing(1)};
+    }
+  }
+    .MuiListSubheader-root {
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: ${theme.typography.pxToRem(12)};
+      color: ${theme.colors.alpha.trueWhite[50]};
+      padding: ${theme.spacing(0, 2.5)};
+      line-height: 1.4;
+    }
+`
+);
+
+const SubMenuWrapper = styled(Box)(
+  ({ theme }) => `
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+    .MuiList-root {
+
+      .MuiListItem-root {
+        padding: 1px 0;
+
+        .MuiBadge-root {
+          position: absolute;
+          right: ${theme.spacing(3.2)};
+
+          .MuiBadge-standard {
+            background: ${theme.colors.primary.main};
+            font-size: ${theme.typography.pxToRem(10)};
+            font-weight: bold;
+            text-transform: uppercase;
+            color: ${theme.palette.primary.contrastText};
+          }
+        }
+    
+        .MuiButton-root {
+          display: flex;
+          color: #01061C;
+          background-color: transparent;
+          width: 100%;
+          justify-content: center;
+          padding: ${theme.spacing(0)};
+          border-radius: ${theme.spacing(0)};
+          padding: 14px 14px;
+          .MuiButton-startIcon,
+          .MuiButton-endIcon {
+            transition: ${theme.transitions.create(["color"])};
+            .MuiSvgIcon-root {
+              color: #a3a4a5;
+              font-size: 24px;
+              transition: none;
+            }
+          }
+
+          .MuiButton-startIcon {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: ${theme.typography.pxToRem(20)};
+            margin: ${theme.spacing(0)};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            svg {
+              path {
+                fill: #E3E3ED;
+                opacity: 0.5;
+              }
+            }
+          }
+          
+          .MuiButton-endIcon {
+            color: #01061C;
+            margin-left: auto;
+            opacity: .8;
+            font-size: ${theme.typography.pxToRem(20)};
+          }
+
+          &.active,
+          &:hover {
+            // border-left: 5px solid #282F6C;
+            color: ${theme.colors.alpha.trueWhite[100]};
+
+            span {
+              width: 100%;
+              border-radius: 5px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .MuiButton-startIcon,
+            .MuiButton-endIcon {
+              transition: ${theme.transitions.create(["color"])};
+              .MuiSvgIcon-root {
+                color: ${theme.colors.alpha.trueWhite[100]};
+                font-size: 26px;
+                transition: none;
+              }
+              svg {
+                path {
+                  fill: #FFF;
+                  opacity: 1;
+                }
+              }
+            }
+          }
+        }
+
+        &.Mui-children {
+          flex-direction: column;
+
+          .MuiBadge-root {
+            position: absolute;
+            right: ${theme.spacing(7)};
+          }
+        }
+
+        .MuiCollapse-root {
+          width: 100%;
+
+          .MuiList-root {
+            padding: ${theme.spacing(0)};
+          }
+
+          .MuiListItem-root {
+            // padding: 1px 0;
+
+            .MuiButton-root {
+              padding: ${theme.spacing(0.8, 3)};
+
+              .MuiBadge-root {
+                right: ${theme.spacing(3.2)};
+              }
+
+              &:before {
+                content: ' ';
+                background: ${theme.colors.alpha.trueWhite[100]};
+                opacity: 0;
+                transition: ${theme.transitions.create([
+                  "transform",
+                  "opacity",
+                ])};
+                width: 6px;
+                height: 6px;
+                transform: scale(0);
+                transform-origin: center;
+                border-radius: 20px;
+                margin-right: ${theme.spacing(1.8)};
+              }
+
+              &.active,
+              &:hover {
+
+                &:before {
+                  transform: scale(1);
+                  opacity: 1;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+`
+);
+
+function SidebarMenu() {
+  const ref = useRef<any>(null);
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const handleOpen = (): void => {
+    setOpen(true);
+  };
+
+  const handleClose = (): void => {
+    setOpen(false);
+  };
+  return (
+    <>
+      <MenuWrapper>
+        <List component="div" sx={{ height: "100%" }}>
+          <SubMenuWrapper>
+            <List component="div">
+              <ListItem component="div">
+                <Tooltip placement="right" title="Home" arrow>
+                  <Button
+                    disableRipple
+                    component={RouterLink}
+                    to="/home"
+                    startIcon={<DashboardIcon />}
+                  />
+                </Tooltip>
+              </ListItem>
+              {/* <ListItem component="div">
+                <Tooltip placement="right" title="Tasks" arrow>
+                  <Button
+                    disableRipple
+                    component={RouterLink}
+                    to="/tasks/:id"
+                    startIcon={<AssignmentIndIcon />}
+                  />
+                </Tooltip>
+              </ListItem> */}
+              <ListItem component="div">
+                <Tooltip placement="right" title="Patients" arrow>
+                  <Button
+                    disableRipple
+                    component={RouterLink}
+                    to="/patient"
+                    startIcon={<ProfileIcon />}
+                  />
+                </Tooltip>
+              </ListItem>
+              <ListItem component="div">
+                <Tooltip placement="right" title="Insurance" arrow>
+                  <Button
+                    disableRipple
+                    component={RouterLink}
+                    to="/insurance"
+                    startIcon={<UmbrellaIcon />}
+                  />
+                </Tooltip>
+              </ListItem>
+              <ListItem component="div">
+                <Tooltip placement="right" title="Reports" arrow>
+                  <Button
+                    disableRipple
+                    component={RouterLink}
+                    to="/orders"
+                    startIcon={<ReportsIcon />}
+                  />
+                </Tooltip>
+              </ListItem>
+              <ListItem component="div">
+                <Tooltip placement="right" title="Billing" arrow>
+                  <Button
+                    disableRipple
+                    component={RouterLink}
+                    to="/pricings"
+                    startIcon={<BillingIcon />}
+                  />
+                </Tooltip>
+              </ListItem>
+              <ListItem component="div">
+                <Tooltip placement="right" title="Settings" arrow>
+                  <Button
+                    ref={ref}
+                    onClick={handleOpen}
+                    disableRipple
+                    startIcon={<SettingsIcon />}
+                  />
+                </Tooltip>
+                <Popover
+                  anchorEl={ref.current}
+                  onClose={handleClose}
+                  open={isOpen}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  sx={{ left: "38px", top: "-12px" }}
+                >
+                  <List sx={{ p: 0 }}>
+                    <StyledList
+                      onClick={() => {
+                        navigate("/home");
+                        handleClose();
+                      }}
+                    >
+                      <Box flex="1">
+                        <Box display="flex" justifyContent="space-between">
+                          <StyledTitle>Home</StyledTitle>
+                        </Box>
+                      </Box>
+                    </StyledList>
+                    <Divider />
+                    {/* <StyledList
+                      onClick={() => {
+                        navigate("/tasks/:id");
+                        handleClose();
+                      }}
+                    >
+                      <Box flex="1">
+                        <Box display="flex" justifyContent="space-between">
+                          <StyledTitle>Tasks</StyledTitle>
+                        </Box>
+                      </Box>
+                    </StyledList>
+                    <Divider /> */}
+                    <StyledList
+                      onClick={() => {
+                        navigate("/patient");
+                        handleClose();
+                      }}
+                    >
+                      <Box flex="1">
+                        <Box display="flex" justifyContent="space-between">
+                          <StyledTitle>Patient</StyledTitle>
+                        </Box>
+                      </Box>
+                    </StyledList>
+                    <Divider />
+                    <StyledList
+                      onClick={() => {
+                        navigate("/insurance");
+                        handleClose();
+                      }}
+                    >
+                      <Box flex="1">
+                        <Box display="flex" justifyContent="space-between">
+                          <StyledTitle>Insurance</StyledTitle>
+                        </Box>
+                      </Box>
+                    </StyledList>
+                  </List>
+                </Popover>
+              </ListItem>
+            </List>
+            <Tooltip
+              placement="right"
+              title={` Version: ${version.version}`}
+              arrow
+            >
+              <EyeIcon style={{ stroke: "#FFF" }} />
+            </Tooltip>
+          </SubMenuWrapper>
+        </List>
+      </MenuWrapper>
+    </>
+  );
+}
+
+const StyledTitle = styled(Typography)(
+  () => `
+    && {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 14px;
+    }
+`
+);
+
+const StyledList = styled(ListItem)(
+  () => `
+    && {
+      padding: 18px;
+      cursor: pointer;  
+      &&:hover {
+        background: #e6e6e6;
+      }
+    }
+`
+);
+
+export default SidebarMenu;
