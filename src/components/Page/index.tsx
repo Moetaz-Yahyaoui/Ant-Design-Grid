@@ -21,7 +21,7 @@ const ContainerPage = styled(Container)(
 );
 
 const Page = forwardRef<HTMLInputElement, PropsType>(
-  ({ children, ...other }, ref): null | JSX.Element => (
+  ({ children, ...other }): null | JSX.Element => (
     <>
       <ContainerPage sx={{ height: "100%" }} maxWidth={false} {...other}>
         <Grid>{children}</Grid>

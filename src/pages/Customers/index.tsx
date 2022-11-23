@@ -1,32 +1,14 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  ChangeEvent,
-  useRef,
-  useMemo,
-} from "react";
+import { useState, useEffect, useCallback, ChangeEvent, useRef } from "react";
 
 import MainTable from "@components/Table/MainTable";
 
-import { ICompany } from "~/types";
 import Page from "@components/Page";
 import { getAllPatient, Delete } from "~/repositories/patients.servise";
 import ADDForm from "./AddCustomers/AddForm";
 import { useParams } from "react-router-dom";
 import { If, Then, Else } from "react-if";
-import { Get } from "~/repositories/patients.servise";
 import { ReactComponent as Close } from "~/assets/icons/close.svg";
-import {
-  Box,
-  Drawer,
-  styled,
-  Divider,
-  useTheme,
-  darken,
-  BoxTypeMap,
-  Typography,
-} from "@mui/material";
+import { Box, styled, Divider, Typography } from "@mui/material";
 import SuspenseLoader from "~/components/SuspenseLoader";
 
 interface IDefaultValues {
@@ -167,7 +149,6 @@ function CustomersPage() {
           <Divider />
           <ADDForm
             patient={patient}
-            id={id}
             onOpenMenu={handelEdit}
             onFetch={getPatients}
           />
@@ -180,7 +161,7 @@ function CustomersPage() {
 const EditSideMenu = styled("div", {
   shouldForwardProp: prop => prop !== "visible",
 })<EditMenuProps>(
-  ({ theme, visible }) => `
+  ({ visible }) => `
   width: ${visible ? "33%" : "0"};
   position: absolute;
   height: 100%;

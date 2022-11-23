@@ -180,14 +180,12 @@ const DEFAULT_VALUES: IDefaultValues = {
 
 interface IPropscompanyForm {
   patient: any | null;
-  id?: string;
   onOpenMenu: (record?: any) => void;
   onFetch: (pagination: IPagination) => void;
 }
 
 const companyForm: React.FC<IPropscompanyForm> = ({
   patient,
-  id,
   onOpenMenu,
   onFetch,
 }) => {
