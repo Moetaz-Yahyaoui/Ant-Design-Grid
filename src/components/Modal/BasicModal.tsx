@@ -53,11 +53,7 @@ const ResponsiveDialog: FC<IResponsiveDialog> = ({
       >
         <StyledBox></StyledBox>
         <Box display="flex" alignItems="center" p="15px">
-          <Box
-            component="img"
-            src="/static/image/warning.png"
-            // sx={{ width: 140, height: 40 }}
-          />
+          <Box component="img" src="/static/image/warning.png" />
           <Box>
             <DialogTitle id="responsive-dialog-title">{title}</DialogTitle>
             <DialogContent>

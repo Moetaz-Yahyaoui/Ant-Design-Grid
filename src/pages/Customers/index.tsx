@@ -67,7 +67,7 @@ const CUSTOMER_SHARED_DATA: Record<string, any> = {
 function CustomersPage() {
   const [patient, setPatient] = useState<IDefaultValues | null>(null);
   const { id } = useParams();
-  const [customers, setCustomers] = useState<ICompany[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
   const [pagination, setPagination] = useState<IPagination>({
     page: 0,
     limit: 50,
@@ -81,15 +81,9 @@ function CustomersPage() {
   const getPatients = useCallback(
     async (pagination: IPagination) => {
       setIsLoading(true);
-      await PatientsService.current(pagination).then(
-        (response: any) => {
-          setCustomers(response.data.data);
-          setTotalRows(response.data.total);
-        },
-        (error: any) => {
-          console.log(error);
-        }
-      );
+      const patients = PatientsService.current(pagination);
+      setCustomers(patients);
+      setTotalRows(38811);
       setIsLoading(false);
     },
     [PatientsService]
@@ -156,7 +150,6 @@ function CustomersPage() {
               pagination={pagination}
               onDeleteItem={onDeletePatient}
               itemlist={customers}
-              basicRoute={"patient"}
               sharedData={CUSTOMER_SHARED_DATA}
               totalRows={totalRows}
               onOpenMenu={handelEdit}

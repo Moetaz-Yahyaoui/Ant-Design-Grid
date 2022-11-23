@@ -202,14 +202,8 @@ const companyForm: React.FC<IPropscompanyForm> = ({
 
   const fetchStates = React.useCallback(
     async (pagination: any) => {
-      await StatesService.current(pagination).then(
-        (response: any) => {
-          setStates(response.data.data);
-        },
-        (error: any) => {
-          console.log(error);
-        }
-      );
+      const states = StatesService.current(pagination);
+      setStates(states);
     },
     [StatesService]
   );

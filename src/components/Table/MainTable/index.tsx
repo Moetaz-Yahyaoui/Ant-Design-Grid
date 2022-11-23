@@ -26,13 +26,9 @@ import {
   styled,
 } from "@mui/material";
 
-import { makeStyles } from "@mui/styles";
-
 import Label from "@components/Label";
 import { ServiceStatus } from "~/types/patienTable";
 import { IMainTable } from "~/types";
-import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
-import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import BulkActions from "./BulkActions";
 import { useNavigate } from "react-router-dom";
 import Modal from "@components/Modal/BasicModal";
@@ -55,7 +51,6 @@ interface RecentOrdersTableProps {
   handleLimitChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handlePageChange: (event: any, newPage: number) => void;
   tableRowColumns: Array<string>;
-  basicRoute: string;
   sharedData: Record<string, any>;
   totalRows: number;
   onOpenMenu: (record: any) => void;
@@ -99,25 +94,6 @@ const CardStyled = styled(Card)(
 `
 );
 
-const statusOptions = [
-  {
-    id: "all",
-    name: "All",
-  },
-  {
-    id: "completed",
-    name: "Completed",
-  },
-  {
-    id: "pending",
-    name: "Pending",
-  },
-  {
-    id: "failed",
-    name: "Failed",
-  },
-];
-
 const applyFilters = (
   itemlist: IMainTable[],
   filters: Filters
@@ -146,20 +122,10 @@ const applyFilters = (
   });
 };
 
-const applyPagination = (
-  itemlist: IMainTable[],
-  page: number,
-  limit: number
-): IMainTable[] => {
+const applyPagination = (itemlist: IMainTable[]): IMainTable[] => {
   // return itemlist.slice(page * limit, page * limit + limit);
   return itemlist;
 };
-
-const useStyles = makeStyles({
-  customTableContainer: {
-    overflowX: "initial",
-  },
-});
 
 const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   title,
@@ -169,19 +135,13 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   handleLimitChange,
   handlePageChange,
   tableRowColumns,
-  basicRoute,
   sharedData,
   totalRows,
   onOpenMenu,
 }) => {
-  const classes = useStyles();
   const [selectedItems, setItems] = useState<number[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [selectedID, setSelectedID] = useState<number>();
-  // const selectedBulkActions = useMemo(
-  //   () => selectedItems.length > 0,
-  //   [selectedItems]
-  // );
   const [filters, setFilters] = useState<Filters>({
     status: null,
     query: "",
@@ -212,11 +172,8 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
     () => applyFilters(itemlist, filters),
     [filters, itemlist]
   );
-  const paginatedItems = applyPagination(
-    filteredItems,
-    pagination.page,
-    pagination.limit
-  );
+
+  const paginatedItems = applyPagination(filteredItems);
 
   const selectedSomeItems = useMemo(
     () => selectedItems.length > 0 && selectedItems.length < itemlist.length,
@@ -231,17 +188,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   const theme = useTheme();
 
   const navigate = useNavigate();
-
-  const EditItem = useCallback(
-    (id: any, name: any): void => {
-      navigate(
-        `/${
-          basicRoute === "patient" ? "patient" : basicRoute
-        }/${id}?name=${name}`
-      );
-    },
-    [basicRoute, navigate]
-  );
 
   const handleClickOpen = useCallback(
     (id: any) => {
@@ -307,10 +253,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
               const isItemSelected = selectedItems.includes(item.id as number);
               return (
                 <TableRow hover key={index} selected={isItemSelected}>
-                  <TableCell
-                    padding="checkbox"
-                    onClick={() => EditItem(item.id, item.firstname)}
-                  >
+                  <TableCell padding="checkbox">
                     <Checkbox
                       color="primary"
                       checked={isItemSelected}
@@ -322,10 +265,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   </TableCell>
                   {tableRowColumns.map((key, index) => {
                     return (
-                      <TableCell
-                        key={index}
-                        onClick={() => EditItem(item["id"], item["firstname"])}
-                      >
+                      <TableCell key={index}>
                         <Typography
                           variant="body1"
                           color="text.primary"
@@ -350,7 +290,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   <TableCell align="right">
                     <Tooltip title="View Patient" arrow>
                       <IconButton
-                        onClick={() => EditItem(item.id, item.firstname)}
+                        onClick={() => onOpenMenu(item)}
                         sx={{
                           "&:hover": {
                             background: theme.colors.primary.lighter,
